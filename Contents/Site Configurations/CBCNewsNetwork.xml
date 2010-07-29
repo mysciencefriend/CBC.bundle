@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site site="http://www.cbc.ca/video/#/*"
+	    plugin="http://www.cbc.ca/video/swf/UberPlayer.swf*"
+			initialState="playing"
+			version="1.0">
+			
+	<crop x="0" y="0" width="640" height="360" />
+
+	<seekbar type="simple" smallStep="5" bigStep="15">
+		<start x="70" y="381" />
+		<end   x="497" y="381" />
+		<played>
+
+			<color rgb="111111" />
+			<color rgb="121212" />
+			<color rgb="2A2A2A" />
+				
+		</played>
+	</seekbar>
+
+
+	<!-- Set Colors for Stopped Video -->
+
+    <condition name="stopped">
+				<and>
+					<color x="546"  y="263" rgb="ffffff" />
+					<color x="30"  y="357" rgb="494949" />
+				</and>
+	</condition>
+	
+	<!-- Set Colors for Ad-Playing Video -->
+    <condition name="ad">
+				<and>
+					<color x="159"  y="407" rgb="ffffff" />
+					<color x="76"  y="406" rgb="ffffff" />
+				</and>
+	</condition>
+	
+	<!-- Set Colors for not Ad-Playing Video -->
+    <condition name="notad">
+					<color x="76"  y="406" rgb="2e2e2e" />
+	</condition>
+	
+	<!-- Set Colors for Paused Video -->
+	    <condition name="paused">
+					<and>
+						<color x="40"  y="383" rgb="1e1e1e" />
+					</and>
+		</condition>
+	
+
+	<!-- PLAYING -->
+	<state name="playing">
+		
+		<!-- Click to pause -->
+		<event>
+			<condition>
+				<command name="pause" />
+			</condition>
+			<action>
+				<click x="40" y="383" />
+				<goto state="paused" />
+			</action>
+		</event>
+		<event>
+			<condition>
+				<color x="76" y="406" rgb="ffffff" />
+			</condition>
+			<action>
+				<goto state="ad" />
+			</action>
+		</event>
+		<event>
+			<condition>
+				<and>
+					<color x="507" y="383" rgb="ffffff" />
+					<color x="40" y="388" rgb="494949" />
+				</and>
+			</condition>
+			<action>
+				<goto state="end" />
+			</action>
+		</event>
+	</state>
+	
+	<!-- PAUSED -->
+	<state name="paused">
+		
+		<!-- Wait for play command -->
+		<event>
+			<condition>
+					<command name="play" />
+			</condition>
+			<action>
+				<click x="40" y="383" />
+				<goto state="playing" />
+			</action>
+		</event>
+	</state>
+	<!-- STOPPED -->
+	<state name="stopped">
+		<event>
+			<condition>
+				<condition name="stopped" />
+			</condition>
+			<action>
+				<pause time="500" />
+				<click x="546" y="263" />
+				<goto state="playing" />
+			</action>
+		</event>
+		
+	</state>
+	<!-- AD -->
+	<state name="ad">
+		<event>
+			<condition>
+			  <condition name="notad" />
+			</condition>
+			<action>
+				<goto state="playing" />
+			</action>
+		</event>
+		<event>
+			<condition>
+				<command name="pause" />
+			</condition>
+			<action>
+				<click x="40" y="383" />
+				<goto state="paused-ad" />
+			</action>
+		</event>
+	</state>
+	<!-- PAUSED -->
+	<state name="paused-ad">
+		
+		<!-- Wait for play command -->
+		<event>
+			<condition>
+					<command name="play" />
+			</condition>
+			<action>
+				<click x="40" y="383" />
+				<goto state="playing" />
+			</action>
+		</event>
+	</state>
+
+</site>

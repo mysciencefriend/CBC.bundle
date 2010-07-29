@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site site="http://www.cbc.ca/thenational/watch/"
+	    plugin="http://www.cbc.ca/video/swf/UberPlayer.swf*"
+			initialState="stopped"
+			version="1.0">
+			
+	<crop x="0" y="0" width="580" height="327" />
+
+	<seekbar type="simple" smallStep="5" bigStep="10">
+		<start x="2" y="331" />
+		<end   x="567" y="331" />
+		<played>
+			<color rgb="111111" />
+			<color rgb="121212" />
+			<color rgb="2A2A2A" />
+		</played>
+	</seekbar>
+
+
+	<!-- Set Colors for Stopped Video -->
+
+    <condition name="stopped">
+				<and>
+					<color x="546"  y="263" rgb="ffffff" />
+					<color x="30"  y="357" rgb="494949" />
+				</and>
+	</condition>
+	
+	<!-- Set Colors for Paused Video -->
+	    <condition name="paused">
+					<and>
+						<color x="30"  y="353" rgb="1e1e1e" />
+					</and>
+		</condition>
+	
+
+	<!-- PLAYING -->
+	<state name="playing">
+		
+		<!-- Click to pause -->
+		<event>
+			<condition>
+				<command name="pause" />
+			</condition>
+			<action>
+				<click x="28" y="357" />
+				<goto state="paused" />
+			</action>
+		</event>
+
+	</state>
+	
+	<!-- PAUSED -->
+	<state name="paused">
+		
+		<!-- Wait for play command -->
+		<event>
+			<condition>
+				<command name="play" />
+			</condition>
+			<action>
+				<click x="28" y="357" />
+				<goto state="playing" />
+			</action>
+		</event>
+	</state>
+	<!-- STOPPED -->
+	<state name="stopped">
+		<event>
+			<condition>
+				<condition name="stopped" />
+			</condition>
+			<action>
+				<pause time="3000" />
+				<click x="546" y="263" />
+				<goto state="playing" />
+			</action>
+		</event>
+		
+	</state>
+</site>
