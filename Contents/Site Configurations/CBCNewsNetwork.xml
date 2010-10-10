@@ -6,15 +6,18 @@
 			
 	<crop x="0" y="0" width="640" height="360" />
 
-	<seekbar type="simple" smallStep="5" bigStep="15">
-		<start x="70" y="381" />
-		<end   x="497" y="381" />
+	 <seekbar type="simple" smallStep="10" bigStep="20">
+		<start x="75" y="385" />
+		<end   x="497" y="385" />
 		<played>
-
 			<color rgb="111111" />
 			<color rgb="121212" />
-			<color rgb="2A2A2A" />
-				
+			<color rgb="303030" />
+			<color rgb="1F1F1F" />
+			<color rgb="313131" />
+			<color rgb="191919" />
+			<!-- color rgb="2A2A2A" / -->
+			<!-- color rgb="FFFFFF" / -->	
 		</played>
 	</seekbar>
 

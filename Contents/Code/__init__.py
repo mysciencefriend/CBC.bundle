@@ -1,9 +1,8 @@
-# PMS plugin framework
 import urllib
 import time
 
 ####################################################################################################
-#Version 0.05
+#Version 0.06
 #CBC.CA Video Plugin
 #Written by mysciencefriend - look me up on the plexapp.com forums for help
 #Use at your own risk, etc. etc.
@@ -13,7 +12,7 @@ VIDEO_PREFIX = "/video/cbc"
 
 NAME = 'CBC'
 
-ART           = 'art-default.png'
+ART           = 'art-default.jpg'
 ICON          = 'icon-default.png'
 
 CATEGORY_LIST = {'News'		:	'1221258968',
@@ -174,25 +173,48 @@ def GetClips(sender, category, arrange, title2, currentPage=0):
 
 
 ########################################
+#def GetRSS(sender, title2, show=""):
+#	if show == "NoD":
+#		dataURL = "http://www.cbc.ca/podcasting/includes/thenational-video-podcast.xml"
+#		thumb = R('bg-yourNational.jpg')
+#	elif show == "AtIssue":
+#		dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/atissue-video-podcast.xml"
+#		thumb = R('atissue.png')
+#	elif show == "RexMurphy":
+#		dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/rexmurphy-video-podcast.xml"
+#		thumb = R('rexmurphy.jpg')
+#	cbcRSS = RSS.FeedFromURL(dataURL, cacheTime=600)['entries']
+#	dir = MediaContainer(viewGroup="InfoList", title2=title2)
+#	for clip in cbcRSS:
+#		title = clip['title']
+#		summary = clip['summary']
+#		url = clip['link']
+#		length = int(clip['itunes_duration']) * 1000
+#		dir.Append(VideoItem(url, title, thumb=thumb, summary=summary, duration=length))
+#	return dir
+#
+
 def GetRSS(sender, title2, show=""):
-	if show == "NoD":
-		dataURL = "http://www.cbc.ca/podcasting/includes/thenational-video-podcast.xml"
-		thumb = R('bg-yourNational.jpg')
-	elif show == "AtIssue":
-		dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/atissue-video-podcast.xml"
-		thumb = R('atissue.png')
-	elif show == "RexMurphy":
-		dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/rexmurphy-video-podcast.xml"
-		thumb = R('rexmurphy.jpg')
-	cbcRSS = RSS.FeedFromURL(dataURL, cacheTime=600)['entries']
-	dir = MediaContainer(viewGroup="InfoList", title2=title2)
-	for clip in cbcRSS:
-		title = clip['title']
-		summary = clip['summary']
-		url = clip['link']
-		length = int(clip['itunes_duration']) * 1000
-		dir.Append(VideoItem(url, title, thumb=thumb, summary=summary, duration=length))
-	return dir
+        if show == "NoD":
+                dataURL = "http://www.cbc.ca/podcasting/includes/thenational-video-podcast.xml"
+                thumb = R('bg-yourNational.jpg')
+        elif show == "AtIssue":
+                dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/atissue-video-podcast.xml"
+                thumb = R('atissue.png')
+        elif show == "RexMurphy":
+                dataURL = "http://www.cbc.ca/mediafeeds/rss/cbc/rexmurphy-video-podcast.xml"
+                thumb = R('rexmurphy.jpg')
+        cbcRSS = XML.ElementFromURL(dataURL, cacheTime=600).xpath('/rss/channel/item')
+        dir = MediaContainer(viewGroup="InfoList", title2=title2)
+        for clip in cbcRSS:
+                title = clip.xpath('./title')[0].text
+                summary = clip.xpath('./itunes:summary', namespaces={'itunes':'http://www.itunes.com/dtds/podcast-1.0.dtd'})[0].text
+                url = clip.xpath('./link')[0].text
+                length = clip.xpath('./itunes:duration', namespaces={'itunes':'http://www.itunes.com/dtds/podcast-1.0.dtd'})[0].text
+                length = int(length) * 1000
+                dir.Append(VideoItem(url, title, thumb=thumb, summary=summary, duration=length))
+        return dir
+
 ###########################################
 def GetEpisodesUrl(showName, clipType, maxClips='500'):
 	query = 'ContentCustomText|Show|' + showName
