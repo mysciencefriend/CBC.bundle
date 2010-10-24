@@ -20,11 +20,13 @@
 	<string>MacOSX</string>
 	<key>PlexFrameworkVersion</key>
 	<string>2</string>
-    <key>PlexMediaContainer</key>
-    <string>M4V</string>
-	<key>PlexPluginMode</key>
-	<string>AlwaysOn</string>
+	<key>PlexMediaContainer</key>
+	<array>
+		<string>M4V</string>
+	</array>
 	<key>PlexPluginConsoleLogging</key>
 	<string>0</string>
+	<key>PlexPluginMode</key>
+	<string>AlwaysOn</string>
 </dict>
 </plist>
