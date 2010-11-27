@@ -36,5 +36,7 @@
     'HNICSummary':'Watch Hockey Night in Canada',
     'HNICMenu':'Hockey Night in Canada',
     'LiveSummary':'Watch live streams of sporting events on CBC',
-    'LiveMenu':'Live Streams'
+    'LiveMenu':'Live Streams',
+	'LocalMenu':'Local News',
+	'NewsLocalSummary':'Watch the latest local news from the CBC News Network'
 }

@@ -2,7 +2,7 @@ import urllib
 import time
 
 ####################################################################################################
-#Version 0.06
+#Version 0.08
 #CBC.CA Video Plugin
 #Written by mysciencefriend - look me up on the plexapp.com forums for help
 #Use at your own risk, etc. etc.
@@ -16,7 +16,21 @@ ART           = 'art-default.jpg'
 ICON          = 'icon-default.png'
 
 CATEGORY_LIST = {'News'		:	'1221258968',
-				'Sports'	:	'1237510081'
+				'Sports'	:	'1237510081',
+				'BC'		:	'1317899897',
+				'Calgary'	:	'1317901071',
+				'Edmonton'	:	'1317901477',
+				'Manitoba'	:	'1317902896',
+				'Montreal'	:	'1317903731',
+				'NB'		:	'1317906492',
+				'NL'		:	'1317907201',
+				'North'		:	'1317907460',
+				'NS'		:	'1317909223',
+				'Ottawa'	:	'1317910092',
+				'PEI'		:	'1317910853',
+				'Saskatchewan':	'1317911675',
+				'Toronto'	:	'1317912017',
+				'Windsor'	:	'1317913355'
 				}
 
 SHOWEXCEPTIONS = {'The Rick Mercer Report'	:	'Rick Mercer Report',
@@ -33,6 +47,7 @@ SHOWEXCEPTIONS_REV = {'Rick Mercer Report'		:	'The Rick Mercer Report',
 
 
 SHOWSLIST = 'http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/getCategoryList?PID=_DyE_l_gC9yXF9BvDQ4XNfcCVLS4PQij&field=ID&field=title&field=parentID&field=description&customField=MaxClips&customField=ClipType&query=ParentIDs|1221254309'
+LOCALLIST = 'http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/getCategoryList?PID=_DyE_l_gC9yXF9BvDQ4XNfcCVLS4PQij&field=ID&field=title&field=parentID&field=description&customField=MaxClips&customField=ClipType&query=ParentIDs|1244502941'
 CLIPSURL = 'http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/getReleaseList?PID=_DyE_l_gC9yXF9BvDQ4XNfcCVLS4PQij&query=CategoryIDs|%s&sortField=%s&sortDescending=true&endIndex=500'
 SHOWSURL = 'http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/getReleaseList?PID=_DyE_l_gC9yXF9BvDQ4XNfcCVLS4PQij&field=title&field=PID&field=ID&field=description&field=categoryIDs&field=thumbnailURL&field=URL&field=added&field=airdate&field=expirationDate&field=length&field=Keywords&query=%s&sortField=airdate&sortDescending=true&startIndex=1&endIndex=%s'
 WATCHURL = 'http://www.cbc.ca/video/#/%s/ID='
@@ -71,6 +86,7 @@ def NewsMenu(sender):
 	dir.Append(Function(DirectoryItem(GetRSS,L('RexMurphyTitle'),subtitle="",summary=L('RexMurphySummary'),thumb=R('rexmurphy.jpg'),art=R(ART),),show="RexMurphy", title2=L('RexMurphyTitle')))
 	dir.Append(Function(DirectoryItem(GetClips,L('NewsRecent'),subtitle="",summary=L('NewsRecentSummary'),thumb=R(ICON),art=R(ART),),category="News", arrange="airdate", title2=L('Latest')))
 	dir.Append(Function(DirectoryItem(GetClips,title=L('NewsPopular'),summary=L('NewsPopularSummary'),thumb=R(ICON),art=R(ART),),category="News", arrange="requestCount", title2=L('MostWatched')))
+	dir.Append(Function(DirectoryItem(LocalMenu,L('LocalMenu'),subtitle="",summary=L('NewsLocalSummary'),thumb=R(ICON),art=R(ART),),title2=L('ShowsMenu')))
 	return dir
 ###################################
 def SportsMenu(sender):
@@ -168,7 +184,7 @@ def GetClips(sender, category, arrange, title2, currentPage=0):
 		thumb = clip['thumbnailURL']
 		dir.Append(WebVideoItem(url, title, summary=summary, thumb=thumb, duration=length))
 	if currentPage < pages:
-		dir.Append(Function(DirectoryItem(GetClips,title="Next Page",summary="More %s Clips" % category,thumb=R(ICON),art=R(ART),),category=category,arrange=arrange, title2=title2, currentPage=currentPage+1))
+		dir.Append(Function(DirectoryItem(GetClips,title=L('NextPage'),summary="More %s Clips" % category,thumb=R(ICON),art=R(ART),),category=category,arrange=arrange, title2=title2, currentPage=currentPage+1))
 	return dir
 
 
@@ -228,3 +244,21 @@ def GetEpisodesUrl(showName, clipType, maxClips='500'):
 			query = query + '&query=ContentCustomText|ClipType|' + urllib.quote(clipType)
 		url = SHOWSURL % (query, maxClips)
 	return url
+
+
+#############################################
+
+def LocalMenu(sender, title2, showName="",category="", currentPage=0, clipType="",maxClips="",subtitle=""):
+	dir = MediaContainer(viewGroup="InfoList", title2=title2)
+	cbcJson = JSON.ObjectFromURL(LOCALLIST, cacheTime=600)['items']
+	for show in cbcJson:
+		title = show['title']
+		summary = show['description']
+		clipType = show['customData'][1]['value']
+		if show['customData'][0]['value'] != "":
+			maxClips = show['customData'][0]['value']
+		else:
+			maxClips = 500	
+		showName = urllib.quote(show['title'])
+		dir.Append(Function(DirectoryItem(GetClips,title=title,subtitle="",summary=L('NewsLocalSummary'),thumb=R(ICON),art=R(ART),),category=title, arrange="airdate", title2=L('Latest')))
+	return dir
